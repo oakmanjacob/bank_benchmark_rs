@@ -4,10 +4,13 @@ use rand::distributions::{Distribution, Uniform};
 mod bucket;
 
 use bucket::Bucket;
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::RwLock;
 use std::thread;
 use std::time::Instant;
+
 
 fn main() {
 	// Configure parameters
@@ -136,39 +139,22 @@ fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &[(bool, i32, i3
 		}
 		else {
 			// Transfer
+			let from_bucket;
+			let to_bucket;
+
 			let from_bucket_id = command.1 as usize % locks.len();
 			let to_bucket_id = command.2 as usize % locks.len();
 
 			// Forced order of aquisition to avoid deadlock
 			if from_bucket_id != to_bucket_id {
-				let mut from_bucket;
-				let mut to_bucket;
-				
 				if from_bucket_id < to_bucket_id {
-					from_bucket = locks[from_bucket_id].write().unwrap();
-					to_bucket = locks[to_bucket_id].write().unwrap();
+					from_bucket = Rc::new(RefCell::new(locks[from_bucket_id].write().unwrap()));
+					to_bucket = Rc::new(RefCell::new(locks[to_bucket_id].write().unwrap()));
 				}
 				else {
-					to_bucket = locks[to_bucket_id].write().unwrap();
-					from_bucket = locks[from_bucket_id].write().unwrap();
+					to_bucket = Rc::new(RefCell::new(locks[to_bucket_id].write().unwrap()));
+					from_bucket = Rc::new(RefCell::new(locks[from_bucket_id].write().unwrap()));
 				}
-
-				// Get current balances and double check accounts actually exist
-				let from_account_balance;
-				match from_bucket.get(command.1) {
-					Some(&(_,balance)) => from_account_balance = balance,
-					None => continue
-				}
-
-				let to_account_balance;
-				match to_bucket.get(command.2) {
-					Some(&(_,balance)) => to_account_balance = balance,
-					None => continue
-				}
-
-				// Make the transfer
-				from_bucket.update(command.1, from_account_balance - command.3);
-				to_bucket.update(command.2, to_account_balance + command.3);
 			}
 			else {
 				if command.1 == command.2 {
@@ -176,25 +162,26 @@ fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &[(bool, i32, i3
 					continue;
 				}
 
-				let mut from_to_bucket = locks[from_bucket_id].write().unwrap();
-			
-				// Get current balances and double check accounts actually exist
-				let from_account_balance;
-				match from_to_bucket.get(command.1) {
-					Some(&(_,balance)) => from_account_balance = balance,
-					None => continue
-				}
-	
-				let to_account_balance;
-				match from_to_bucket.get(command.2) {
-					Some(&(_,balance)) => to_account_balance = balance,
-					None => continue
-				}
-	
-				// Make the transfer
-				from_to_bucket.update(command.1, from_account_balance - command.3);
-				from_to_bucket.update(command.2, to_account_balance + command.3);
+				from_bucket = Rc::new(RefCell::new(locks[from_bucket_id].write().unwrap()));
+				to_bucket = Rc::clone(&from_bucket);
 			}
+
+			// Get current balances and double check accounts actually exist
+			let from_account_balance;
+			match from_bucket.borrow().get(command.1) {
+				Some(&(_,balance)) => from_account_balance = balance,
+				None => continue
+			}
+
+			let to_account_balance;
+			match to_bucket.borrow().get(command.2) {
+				Some(&(_,balance)) => to_account_balance = balance,
+				None => continue
+			}
+
+			// Make the transfer
+			from_bucket.borrow_mut().update(command.1, from_account_balance - command.3);
+			to_bucket.borrow_mut().update(command.2, to_account_balance + command.3);
 		}
 	}
 
