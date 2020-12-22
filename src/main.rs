@@ -48,17 +48,29 @@ fn main() {
 
 	// Start timer
 	let start = Instant::now();
-
 	let mut threads = Vec::new();
-	for i in 0..thread_count {
+
+	let mut begin = 0 as usize;
+	let mut end = (command_count/thread_count) as usize;
+	let mut spare = (command_count % thread_count) as usize;
+
+	for _ in 0..thread_count {
 		let locks = Arc::clone(&locks);
 		let commands = Arc::clone(&commands);
 
+		// Distribute remainder evenly
+		if spare > 0 {
+			end += 1;
+			spare -= 1;
+		}
+
 		threads.push(thread::spawn(move || {
-			let start: usize = (i * (command_count/thread_count)) as usize;
-			let end: usize = ((i + 1) * (command_count/thread_count)) as usize;
-			do_work(&locks, &commands[start..end])
+			do_work(&locks, &commands[begin..end])
 		}));
+
+		// Shift slice window
+		begin = end;
+		end += (command_count/thread_count) as usize;
 	}
 
 	// Reclaim Threads and Find Max Time Used
