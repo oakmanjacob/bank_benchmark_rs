@@ -12,7 +12,7 @@ use std::time::Instant;
 fn main() {
 	// Configure parameters
 	let stripe_count: u32 = 256;
-	let account_count: u32 = 256;
+	let account_count: u32 = 1024;
 	let command_count: u32 = 1024;
 	let thread_count: u32 = 4;
 
@@ -50,12 +50,14 @@ fn main() {
 	let start = Instant::now();
 
 	let mut threads = Vec::new();
-	for _ in 0..thread_count {
+	for i in 0..thread_count {
 		let locks = Arc::clone(&locks);
 		let commands = Arc::clone(&commands);
 
 		threads.push(thread::spawn(move || {
-			do_work(&locks, &commands)
+			let start: usize = (i * (command_count/thread_count)) as usize;
+			let end: usize = ((i + 1) * (command_count/thread_count)) as usize;
+			do_work(&locks, &commands[start..end])
 		}));
 	}
 
@@ -77,7 +79,7 @@ fn main() {
 	println!("Total {}", start.elapsed().as_micros());
 }
 
-fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &Arc<Vec<(bool, i32, i32, f64)>>) -> u128 {
+fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &[(bool, i32, i32, f64)]) -> u128 {
 	let start = std::time::Instant::now();
 
 	for command in commands.iter() {
@@ -100,43 +102,67 @@ fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &Arc<Vec<(bool, 
 		}
 		else {
 			// Transfer
-			let mut from_bucket;
-			let mut to_bucket;
+			let from_bucket_id = command.1 as usize % locks.len();
+			let to_bucket_id = command.2 as usize % locks.len();
 
 			// Forced order of aquisition to avoid deadlock
-			if command.1 as usize % locks.len() < command.2 as usize % locks.len() {
-				from_bucket = locks[command.1 as usize % locks.len()].write().unwrap();
-				to_bucket = locks[command.2 as usize % locks.len()].write().unwrap();
-			}
-			else if command.1 as usize % locks.len() > command.2 as usize % locks.len() {
-				to_bucket = locks[command.2 as usize % locks.len()].write().unwrap();
-				from_bucket = locks[command.1 as usize % locks.len()].write().unwrap();
-			}
-			else if command.1 == command.2 {
-				println!("Same Account Issue");
-				continue;
+			if from_bucket_id != to_bucket_id {
+				let mut from_bucket;
+				let mut to_bucket;
+				
+				if from_bucket_id < to_bucket_id {
+					from_bucket = locks[from_bucket_id].write().unwrap();
+					to_bucket = locks[to_bucket_id].write().unwrap();
+				}
+				else {
+					to_bucket = locks[to_bucket_id].write().unwrap();
+					from_bucket = locks[from_bucket_id].write().unwrap();
+				}
+
+				// Get current balances and double check accounts actually exist
+				let from_account_balance;
+				match from_bucket.get(command.1) {
+					Some(&(_,balance)) => from_account_balance = balance,
+					None => continue
+				}
+
+				let to_account_balance;
+				match to_bucket.get(command.2) {
+					Some(&(_,balance)) => to_account_balance = balance,
+					None => continue
+				}
+
+				// Make the transfer
+				from_bucket.update(command.1, from_account_balance - command.3);
+				to_bucket.update(command.2, to_account_balance + command.3);
 			}
 			else {
-				println!("Same Bucket Issue");
-				continue;
+				if command.1 == command.2 {
+					println!("Same Account");
+					continue;
+				}
+
+				let mut from_to_bucket = locks[from_bucket_id].write().unwrap();
+			
+				// Get current balances and double check accounts actually exist
+				let from_account_balance;
+				match from_to_bucket.get(command.1) {
+					Some(&(_,balance)) => from_account_balance = balance,
+					None => continue
+				}
+	
+				let to_account_balance;
+				match from_to_bucket.get(command.2) {
+					Some(&(_,balance)) => to_account_balance = balance,
+					None => continue
+				}
+	
+				// Make the transfer
+				from_to_bucket.update(command.1, from_account_balance - command.3);
+				from_to_bucket.update(command.2, to_account_balance + command.3);
 			}
 
-			// Get current balances and double check accounts actually exist
-			let from_account_balance;
-			match from_bucket.get(command.1) {
-				Some(&(_,balance)) => from_account_balance = balance,
-				None => continue
-			}
-
-			let to_account_balance;
-			match to_bucket.get(command.2) {
-				Some(&(_,balance)) => to_account_balance = balance,
-				None => continue
-			}
-
-			// Make the transfer
-			from_bucket.update(command.1, from_account_balance - command.3);
-			to_bucket.update(command.2, to_account_balance + command.3);
+			
 		}
 	}
 
