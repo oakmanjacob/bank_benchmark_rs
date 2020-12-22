@@ -1,15 +1,17 @@
 extern crate rand;
 extern crate rand_pcg;
+
+mod bucket;
+
 use rand::distributions::{Distribution, Uniform};
 use rand::prelude::*;
 use rand_pcg::Pcg64;
 
-mod bucket;
-
-use bucket::Accounts;
 use std::sync::Arc;
 use std::thread;
 use std::time::Instant;
+
+use bucket::Accounts;
 
 
 type AccountId = usize;
