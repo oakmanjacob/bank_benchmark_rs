@@ -47,7 +47,7 @@ Now configure your application to perform the SAME TOTAL amount of iterations ju
 - Which optimization can you do to the single-threaded execution in order to improve its performance?    
 
 ### Final step: Produce plot
-I expect each submission to include at least one plot in which the x-axis is the concurrent threads used {1;2;4;8} the y-axis is the application execution time. The performance at 1 thread must be the sequential application without atomic execution
+Each submission should include at least one plot in which the x-axis is the concurrent threads used {1;2;4;8} the y-axis is the application execution time. The performance at 1 thread must be the sequential application without atomic execution
 
 ## Results
 Plot 1
