@@ -99,9 +99,31 @@ fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &[(bool, i32, i3
 			// Check total balance
 			let mut sum = 0.0;
 			let mut buckets = Vec::new();
+
+			// Aquire locks pessimistically
 			for lock in locks.iter() {
 				buckets.push(lock.read().unwrap());
 			}
+
+			// Aquire locks optimistically
+			// let mut locked = false;
+			// while !locked {
+			// 	locked = true;
+
+			// 	while buckets.len() > 0 {
+			// 		buckets.pop();
+			// 	}
+
+			// 	for lock in locks.iter() {
+			// 		match lock.try_read() {
+			// 			Ok(bucket) => buckets.push(bucket),
+			// 			Err(_) => {
+			// 				locked = false;
+			// 				break;
+			// 			}
+			// 		}
+			// 	}
+			// }
 
 			while buckets.len() > 0 {
 				let bucket = buckets.pop().unwrap();
@@ -173,8 +195,6 @@ fn do_work(locks: &Arc<Vec<RwLock<Bucket<i32,f64>>>>, commands: &[(bool, i32, i3
 				from_to_bucket.update(command.1, from_account_balance - command.3);
 				from_to_bucket.update(command.2, to_account_balance + command.3);
 			}
-
-			
 		}
 	}
 
