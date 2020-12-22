@@ -34,11 +34,11 @@ The function 'do_work' should measure 'exec_time_i', which is the time needed to
 ### Step 6
 Spread the total number of instructions between a specific number of threads and execute them concurrently. Collect the maximum execution time of any of the threads and use this as the execution time. After execution, call the balance function one final time.
 
-- WHAT IS THE OUTPUT OF this call of "balance"?
-- DOES IT MATCH WHAT YOU EXPECT?
-- WHAT DO YOU EXPECT?
-- WHAT ARE THE OUTCOMES OF ALL THE "balance" CALLS DURING THE EXECUTION?
-- IS THAT WHAT YOU EXPECT?
+- What is the output of this call of "balance"?
+- Does it match what you expect?
+- What doe you expect?
+- What are the outcomes of all the "balance" calls during the execution?
+- Is that what you expect?
 
 ### Step 7
 Now configure your application to perform the SAME TOTAL amount of iterations just executed, but all done by a single thread. Measure the time to perform them and compare with the time previously collected.
