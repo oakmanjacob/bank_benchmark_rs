@@ -13,7 +13,6 @@ use std::time::Instant;
 
 use bucket::Accounts;
 
-
 type AccountId = usize;
 
 enum Command {
