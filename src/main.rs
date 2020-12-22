@@ -5,12 +5,12 @@ use rand::distributions::{Distribution, Uniform};
 use rand::prelude::*;
 use rand_pcg::Pcg64;
 
-mod bucket;
-
-use bucket::Accounts;
 use std::sync::Arc;
 use std::thread;
 use std::time::Instant;
+
+mod bucket;
+use bucket::Accounts;
 
 type AccountId = usize;
 
@@ -28,7 +28,7 @@ fn main() {
 	let stripe_count = 256;
 	let account_count = 1024;
 	let command_count = 100000;
-	let thread_count = 1;
+	let thread_count = 4;
 
 	let accounts = Arc::new(Accounts::new(stripe_count));
 
