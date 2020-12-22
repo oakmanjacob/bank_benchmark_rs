@@ -20,6 +20,10 @@ impl Accounts {
     }
 
     pub fn transfer(&self, from: AccountId, to: AccountId, amount: f64) -> Result<(), AccountError> {
+        if to == from {
+            return Ok(())
+        }
+        
         let from_bucket_idx = from % self.buckets.len();
         let to_bucket_idx = to % self.buckets.len();
 
@@ -29,8 +33,8 @@ impl Accounts {
 
             let from_amount = bucket.get(from).ok_or(AccountError::DoesNotExist)?.1;
             let to_amount = bucket.get(to).ok_or(AccountError::DoesNotExist)?.1;
-            bucket.update(from, from_amount - amount);
-            bucket.update(to, to_amount + amount);
+            assert!(bucket.update(from, from_amount - amount));
+            assert!(bucket.update(to, to_amount + amount));
         } else {
             // Different buckets.
             // We have to be careful here, we must always lock in the same order to prevent deadlocks.
@@ -46,8 +50,8 @@ impl Accounts {
 
             let from_amount = from_bucket.get(from).ok_or(AccountError::DoesNotExist)?.1;
             let to_amount = to_bucket.get(to).ok_or(AccountError::DoesNotExist)?.1;
-            from_bucket.update(from, from_amount - amount);
-            to_bucket.update(to, to_amount + amount);
+            assert!(from_bucket.update(from, from_amount - amount));
+            assert!(to_bucket.update(to, to_amount + amount));
         }
 
         Ok(())

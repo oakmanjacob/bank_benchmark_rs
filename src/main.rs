@@ -85,7 +85,8 @@ fn main() {
         .unwrap();
 
     println!("Max time {}", max_time);
-    println!("Total {}", start.elapsed().as_micros());
+    println!("Total time {}", start.elapsed().as_micros());
+    println!("Total balance: {}", accounts.sum_up_all_accounts());
 }
 
 fn do_work2(accounts: &Accounts, commands: &[Command]) -> u128 {
@@ -94,9 +95,7 @@ fn do_work2(accounts: &Accounts, commands: &[Command]) -> u128 {
     for command in commands {
         match command {
             &Command::Transfer { from, to, amount } => {
-                println!("starting transfer");
                 accounts.transfer(from, to, amount).expect("account doesn't exist");
-                println!("ending transfer");
             },
             Command::CheckTotalBalance => {
                 println!("Total Balance {}", accounts.sum_up_all_accounts());
