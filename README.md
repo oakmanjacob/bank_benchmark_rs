@@ -27,6 +27,7 @@ Define a function "balance" that sums the amount of all the bank accounts in the
 
 ### Step 5
 Define a function 'do_work', which has a for-loop that iterates for config_t.iters times. In each iteration, the function 'transfer' should be called with 95% of the probability; otherwise (the rest 5%) the function 'balance' should be called.  
+  
 The function 'do_work' should measure 'exec_time_i', which is the time needed to perform the entire for-loop. This time will be shared with the main thread once the thread executing the 'do_work' joins its execution with the main thread.
 
 ### Step 6
@@ -38,15 +39,10 @@ of iterations just executed, but all done by a single thread.
 Measure the time to perform them and compare with the time  
 previously collected.  
 - Which conclusion can you draw?  
-- Which optimization can you do to the single-threaded execution in  
-- order to improve its performance?    
+- Which optimization can you do to the single-threaded execution in order to improve its performance?    
 
 ### Final step: Produce plot
-I expect each submission to include at least one plot in which  
-the x-axis is the concurrent threads used {1;2;4;8}  
-the y-axis is the application execution time.  
-The performance at 1 thread must be the sequential  
-application without atomic execution
+I expect each submission to include at least one plot in which the x-axis is the concurrent threads used {1;2;4;8} the y-axis is the application execution time. The performance at 1 thread must be the sequential application without atomic execution
 
 ## Results
 Plot 1
