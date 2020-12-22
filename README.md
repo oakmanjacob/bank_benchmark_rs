@@ -12,6 +12,7 @@ Here is a slightly adapted version of the origional instructions with c specific
 
 ### Step 1
 Define a map of types <int,double>. This map represents a collection of bank accounts:
+
 - each account has a unique ID of type int 
 - each account has an amount of fund of type double
 
@@ -31,13 +32,17 @@ Define a function 'do_work', which has a for-loop that iterates for config_t.ite
 The function 'do_work' should measure 'exec_time_i', which is the time needed to perform the entire for-loop. This time will be shared with the main thread once the thread executing the 'do_work' joins its execution with the main thread.
 
 ### Step 6
-Spread the total number of instructions between a specific number of threads and execute them concurrently. Collect the maximum execution time of any of the threads and use this as the execution time.
+Spread the total number of instructions between a specific number of threads and execute them concurrently. Collect the maximum execution time of any of the threads and use this as the execution time. After execution, call the balance function one final time.
+
+- WHAT IS THE OUTPUT OF this call of "balance"?
+- DOES IT MATCH WHAT YOU EXPECT?
+- WHAT DO YOU EXPECT?
+- WHAT ARE THE OUTCOMES OF ALL THE "balance" CALLS DURING THE EXECUTION?
+- IS THAT WHAT YOU EXPECT?
 
 ### Step 7
-Now configure your application to perform the SAME TOTAL amount  
-of iterations just executed, but all done by a single thread.  
-Measure the time to perform them and compare with the time  
-previously collected.  
+Now configure your application to perform the SAME TOTAL amount of iterations just executed, but all done by a single thread. Measure the time to perform them and compare with the time previously collected.
+
 - Which conclusion can you draw?  
 - Which optimization can you do to the single-threaded execution in order to improve its performance?    
 
