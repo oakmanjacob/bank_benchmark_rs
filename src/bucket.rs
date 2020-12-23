@@ -114,8 +114,8 @@ impl AccountsSeq {
 			assert!(bucket.update(to, to_amount + amount));
 		} else {
 			// Different buckets.
-			let from_bucket = self.buckets[from_bucket_idx].borrow_mut();
-			let to_bucket = self.buckets[to_bucket_idx].borrow_mut();
+			let mut from_bucket = self.buckets[from_bucket_idx].borrow_mut();
+			let mut to_bucket = self.buckets[to_bucket_idx].borrow_mut();
 
 			let from_amount = from_bucket.get(from).ok_or(AccountError::DoesNotExist)?.1;
 			let to_amount = to_bucket.get(to).ok_or(AccountError::DoesNotExist)?.1;
