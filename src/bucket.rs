@@ -11,6 +11,7 @@ pub struct Accounts {
 }
 
 impl Accounts {
+	/// Constructor with takes a number of buckets which corresponds to the number of stripes.
 	pub fn new(buckets: usize) -> Self {
 		let buckets: Vec<_> = (0..buckets).map(|_| RwLock::new(Bucket::new())).collect();
 		
@@ -19,6 +20,8 @@ impl Accounts {
 		}
 	}
 
+	/// Move an amount of money from one account to another atomically.
+	/// There are not guarentees here that accounts will not go into negative balances.
 	pub fn transfer(&self, from: AccountId, to: AccountId, amount: f64) -> Result<(), AccountError> {
 		if to == from {
 			return Ok(())
@@ -57,6 +60,7 @@ impl Accounts {
 		Ok(())
 	}
 
+	/// Calculate the total sum of all balances in each account
 	pub fn sum_up_all_accounts(&self) -> f64 {
 		let guards: Vec<_> = self.buckets.iter().map(|bucket| bucket.read().unwrap()).collect();
 
@@ -79,6 +83,8 @@ pub struct Bucket<K, V> {
 	map: Vec<(K, V)>
 }
 
+/// A Bucket in this case is represented by a sorted vector
+/// Insert and Remove are O(nlgn) while update and get are O(lgn)
 impl<K: Ord + Copy, V: Copy> Bucket<K, V> {
 	pub fn new() -> Self {
 		Self {
