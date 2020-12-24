@@ -53,12 +53,11 @@ Each submission should include at least one plot in which the x-axis is the conc
 Here are the graphs showing the execution time
 
 ### Test Platform
-Intel Core i7-4790CPU @ 3.60GHz
-16GB DDR3 1600MHz
-Windows 10
+Intel Core i7-4790CPU @ 3.60GHz  
+16GB DDR3 1600MHz  
+Windows 10  
 
 ### Plots
-In these plots, the 1 thread represents a fully sequential implementation without locks
 ![](plots/performance_debug_1024.png?raw=true)
 ![](plots/performance_debug_1048576.png?raw=true)
 ![](plots/performance_release_1024.png?raw=true)

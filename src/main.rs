@@ -30,7 +30,7 @@ fn main() {
 	let stripe_count = 256;
 	let account_count = 1024;
 	let command_count = 1048576;
-	let thread_count = 4;
+	let thread_count = 1;
 
 	// Generate random commands.
 	// Commands will have a 5% change to be a balance command
