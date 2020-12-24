@@ -50,4 +50,16 @@ Now configure your application to perform the SAME TOTAL amount of iterations ju
 Each submission should include at least one plot in which the x-axis is the concurrent threads used {1;2;4;8} the y-axis is the application execution time. The performance at 1 thread must be the sequential application without atomic execution
 
 ## Results
-Plot 1
+Here are the graphs showing the execution time
+
+### Test Platform
+Intel Core i7-4790CPU @ 3.60GHz
+16GB DDR3 1600MHz
+Windows 10
+
+### Plots
+In these plots, the 1 thread represents a fully sequential implementation without locks
+![](plots/performance_debug_1024.png?raw=true)
+![](plots/performance_debug_1048576.png?raw=true)
+![](plots/performance_release_1024.png?raw=true)
+![](plots/performance_release_1048576.png?raw=true)
