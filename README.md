@@ -2,7 +2,7 @@
 by Jacob Oakman with help from Lachlan Sneff
 
 ## Purpose
-This is an example meant to explore concurrency in rust through simulating a simple bank system by adapting a C assignment. The origional implementation can be found [here](https://github.com/oakmanjacob/bank_benchmark_c)
+This is an example meant to explore concurrency in rust through simulating a simple bank system by adapting a C assignment. The original implementation can be found [here](https://github.com/oakmanjacob/bank_benchmark_c).
 
 ## Explanation
 We use a simple map implementation to model a list of accounts in a bank. A series of commands are run on seperate threads either transferring money between accounts or summing the total money across all accounts as a simple correctness check.
