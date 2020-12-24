@@ -7,6 +7,35 @@ This is an example meant to explore concurrency in rust through simulating a sim
 ## Explanation
 We use a simple map implementation to model a list of accounts in a bank. A series of commands are run on seperate threads either transferring money between accounts or summing the total money across all accounts as a simple correctness check.
 
+## Running
+The software can be run with default parameters like this
+```bash
+$> cargo run --release
+```
+Parameters can also be configured
+```bash
+cargo run --release -- -h
+    Finished release [optimized] target(s) in 0.05s
+     Running `target\release\bank_benchmark.exe -h`
+bank_benchmark 0.1.0
+
+USAGE:
+    bank_benchmark.exe [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -a, --account_count <account-count>     [default: 1024]
+    -c, --command_count <command-count>     [default: 1024]
+    -s, --stripe_count <stripe-count>       [default: 256]
+    -t, --thread_count <thread-count>       [default: 1]
+    
+$> cargo run --release -- -t 4 -c 2048
+```
+
+
 ## Assignment Instructions
 Here is a slightly adapted version of the origional instructions with c specific things removed
 
