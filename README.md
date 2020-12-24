@@ -66,7 +66,7 @@ Spread the total number of instructions between a specific number of threads and
 
 - What is the output of this call of "balance"?
 - Does it match what you expect?
-- What doe you expect?
+- What do you expect?
 - What are the outcomes of all the "balance" calls during the execution?
 - Is that what you expect?
 
