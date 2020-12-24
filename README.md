@@ -14,7 +14,7 @@ $> cargo run --release
 ```
 Parameters can also be configured
 ```bash
-cargo run --release -- -h
+$> cargo run --release -- -h
     Finished release [optimized] target(s) in 0.05s
      Running `target\release\bank_benchmark.exe -h`
 bank_benchmark 0.1.0
@@ -31,10 +31,11 @@ OPTIONS:
     -c, --command_count <command-count>     [default: 1024]
     -s, --stripe_count <stripe-count>       [default: 256]
     -t, --thread_count <thread-count>       [default: 1]
-    
+```
+To run the benchmark with 4 threads and 4028 command operations you would run
+```bash
 $> cargo run --release -- -t 4 -c 2048
 ```
-
 
 ## Assignment Instructions
 Here is a slightly adapted version of the origional instructions with c specific things removed
